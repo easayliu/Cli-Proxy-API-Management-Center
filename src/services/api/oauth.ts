@@ -15,6 +15,7 @@ export type OAuthProvider =
 export interface OAuthStartResponse {
   url: string;
   state?: string;
+  needs_code?: boolean;
 }
 
 export interface OAuthCallbackResponse {
@@ -30,7 +31,7 @@ export interface IFlowCookieAuthResponse {
   type?: string;
 }
 
-const WEBUI_SUPPORTED: OAuthProvider[] = ['codex', 'anthropic', 'antigravity', 'gemini-cli'];
+const WEBUI_SUPPORTED: OAuthProvider[] = ['codex', 'antigravity', 'gemini-cli'];
 const CALLBACK_PROVIDER_MAP: Partial<Record<OAuthProvider, string>> = {
   'gemini-cli': 'gemini'
 };
@@ -59,6 +60,15 @@ export const oauthApi = {
     return apiClient.post<OAuthCallbackResponse>('/oauth-callback', {
       provider: callbackProvider,
       redirect_url: redirectUrl
+    });
+  },
+
+  /** 提交授权码（code#state 格式），用于使用官方 redirect URI 的 provider */
+  submitCode: (provider: OAuthProvider, code: string) => {
+    const callbackProvider = CALLBACK_PROVIDER_MAP[provider] ?? provider;
+    return apiClient.post<OAuthCallbackResponse>('/oauth-callback', {
+      provider: callbackProvider,
+      code
     });
   },
 

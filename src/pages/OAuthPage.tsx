@@ -30,6 +30,11 @@ interface ProviderState {
   callbackSubmitting?: boolean;
   callbackStatus?: 'success' | 'error';
   callbackError?: string;
+  needsCode?: boolean;
+  authCode?: string;
+  codeSubmitting?: boolean;
+  codeStatus?: 'success' | 'error';
+  codeError?: string;
 }
 
 interface IFlowCookieState {
@@ -80,7 +85,7 @@ const PROVIDERS: { id: OAuthProvider; titleKey: string; hintKey: string; urlLabe
   { id: 'qwen', titleKey: 'auth_login.qwen_oauth_title', hintKey: 'auth_login.qwen_oauth_hint', urlLabelKey: 'auth_login.qwen_oauth_url_label', icon: iconQwen }
 ];
 
-const CALLBACK_SUPPORTED: OAuthProvider[] = ['codex', 'anthropic', 'antigravity', 'gemini-cli'];
+const CALLBACK_SUPPORTED: OAuthProvider[] = ['codex', 'antigravity', 'gemini-cli'];
 const getProviderI18nPrefix = (provider: OAuthProvider) => provider.replace('-', '_');
 const getAuthKey = (provider: OAuthProvider, suffix: string) =>
   `auth_login.${getProviderI18nPrefix(provider)}_${suffix}`;
@@ -176,7 +181,7 @@ export function OAuthPage() {
         provider,
         provider === 'gemini-cli' ? { projectId: projectId || undefined } : undefined
       );
-      updateProviderState(provider, { url: res.url, state: res.state, status: 'waiting', polling: true });
+      updateProviderState(provider, { url: res.url, state: res.state, status: 'waiting', polling: true, needsCode: res.needs_code });
       if (res.state) {
         startPolling(provider, res.state);
       }
@@ -232,6 +237,35 @@ export function OAuthPage() {
         ? `${t('auth_login.oauth_callback_error')} ${errorMessage}`
         : t('auth_login.oauth_callback_error');
       showNotification(notificationMessage, 'error');
+    }
+  };
+
+  const submitCode = async (provider: OAuthProvider) => {
+    const code = (states[provider]?.authCode || '').trim();
+    if (!code) {
+      showNotification(t('auth_login.oauth_code_required'), 'warning');
+      return;
+    }
+    updateProviderState(provider, {
+      codeSubmitting: true,
+      codeStatus: undefined,
+      codeError: undefined
+    });
+    try {
+      await oauthApi.submitCode(provider, code);
+      updateProviderState(provider, { codeSubmitting: false, codeStatus: 'success' });
+      showNotification(t('auth_login.oauth_code_success'), 'success');
+    } catch (err: unknown) {
+      const message = getErrorMessage(err);
+      updateProviderState(provider, {
+        codeSubmitting: false,
+        codeStatus: 'error',
+        codeError: message || undefined
+      });
+      showNotification(
+        `${t('auth_login.oauth_code_error')} ${message || ''}`,
+        'error'
+      );
     }
   };
 
@@ -401,7 +435,44 @@ export function OAuthPage() {
                       </div>
                     </div>
                   )}
-                  {canSubmitCallback && (
+                  {state.needsCode && state.url && (
+                    <div className={styles.callbackSection}>
+                      <Input
+                        label={t('auth_login.oauth_code_label')}
+                        hint={t('auth_login.oauth_code_hint')}
+                        value={state.authCode || ''}
+                        onChange={(e) =>
+                          updateProviderState(provider.id, {
+                            authCode: e.target.value,
+                            codeStatus: undefined,
+                            codeError: undefined
+                          })
+                        }
+                        placeholder={t('auth_login.oauth_code_placeholder')}
+                      />
+                      <div className={styles.callbackActions}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => submitCode(provider.id)}
+                          loading={state.codeSubmitting}
+                        >
+                          {t('auth_login.oauth_code_button')}
+                        </Button>
+                      </div>
+                      {state.codeStatus === 'success' && state.status === 'waiting' && (
+                        <div className="status-badge success">
+                          {t('auth_login.oauth_code_status_success')}
+                        </div>
+                      )}
+                      {state.codeStatus === 'error' && (
+                        <div className="status-badge error">
+                          {t('auth_login.oauth_code_status_error')} {state.codeError || ''}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {!state.needsCode && canSubmitCallback && (
                     <div className={styles.callbackSection}>
                       <Input
                         label={t('auth_login.oauth_callback_label')}
