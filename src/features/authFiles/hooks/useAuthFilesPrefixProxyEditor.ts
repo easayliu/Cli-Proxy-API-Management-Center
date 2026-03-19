@@ -18,6 +18,7 @@ export type PrefixProxyEditorField =
   | 'priority'
   | 'excludedModelsText'
   | 'disableCooling'
+  | 'rpm'
   | 'websocket'
   | 'note';
 
@@ -37,6 +38,7 @@ export type PrefixProxyEditorState = {
   priority: string;
   excludedModelsText: string;
   disableCooling: string;
+  rpm: string;
   websocket: boolean;
   note: string;
   noteTouched: boolean;
@@ -90,6 +92,13 @@ const buildPrefixProxyUpdatedText = (editor: PrefixProxyEditorState | null): str
     next.disable_cooling = parsedDisableCooling;
   } else if ('disable_cooling' in next) {
     delete next.disable_cooling;
+  }
+
+  const parsedRpm = parsePriorityValue(editor.rpm);
+  if (parsedRpm !== undefined && parsedRpm > 0) {
+    next.rpm = parsedRpm;
+  } else if ('rpm' in next) {
+    delete next.rpm;
   }
 
   if (editor.isCodexFile) {
@@ -157,6 +166,7 @@ export function useAuthFilesPrefixProxyEditor(
       priority: '',
       excludedModelsText: '',
       disableCooling: '',
+      rpm: '',
       websocket: false,
       note: '',
       noteTouched: false,
@@ -208,6 +218,7 @@ export function useAuthFilesPrefixProxyEditor(
       const priority = parsePriorityValue(json.priority);
       const excludedModels = normalizeExcludedModels(json.excluded_models);
       const disableCoolingValue = parseDisableCoolingValue(json.disable_cooling);
+      const rpmValue = parsePriorityValue(json.rpm);
       const websocketValue = parseDisableCoolingValue(json.websocket);
       const note = typeof json.note === 'string' ? json.note : '';
 
@@ -225,6 +236,7 @@ export function useAuthFilesPrefixProxyEditor(
           excludedModelsText: excludedModels.join('\n'),
           disableCooling:
             disableCoolingValue === undefined ? '' : disableCoolingValue ? 'true' : 'false',
+          rpm: rpmValue !== undefined && rpmValue > 0 ? String(rpmValue) : '',
           websocket: websocketValue ?? false,
           note,
           noteTouched: false,
@@ -252,6 +264,7 @@ export function useAuthFilesPrefixProxyEditor(
       if (field === 'priority') return { ...prev, priority: String(value) };
       if (field === 'excludedModelsText') return { ...prev, excludedModelsText: String(value) };
       if (field === 'disableCooling') return { ...prev, disableCooling: String(value) };
+      if (field === 'rpm') return { ...prev, rpm: String(value) };
       if (field === 'note') return { ...prev, note: String(value), noteTouched: true };
       return { ...prev, websocket: Boolean(value) };
     });

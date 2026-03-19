@@ -115,6 +115,14 @@ export function AuthFilesPrefixProxyEditorModal(props: AuthFilesPrefixProxyEdito
                   onChange={(e) => onChange('disableCooling', e.target.value)}
                 />
                 <Input
+                  label={t('auth_files.rpm_label')}
+                  value={editor.rpm}
+                  placeholder={t('auth_files.rpm_placeholder')}
+                  hint={t('auth_files.rpm_hint')}
+                  disabled={disableControls || editor.saving || !editor.json}
+                  onChange={(e) => onChange('rpm', e.target.value)}
+                />
+                <Input
                   label={t('auth_files.note_label')}
                   value={editor.note}
                   placeholder={t('auth_files.note_placeholder')}

@@ -112,6 +112,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
     Boolean(rawStatusMessage) && !HEALTHY_STATUS_MESSAGES.has(rawStatusMessage.toLowerCase());
 
   const priorityValue = parsePriorityValue(file.priority ?? file['priority']);
+  const rpmValue = parsePriorityValue(file.rpm ?? file['rpm']);
   const noteValue = typeof file.note === 'string' ? file.note.trim() : '';
 
   return (
@@ -154,6 +155,11 @@ export function AuthFileCard(props: AuthFileCardProps) {
             {priorityValue !== undefined && (
               <span className={styles.priorityBadge}>
                 {t('auth_files.priority_display')}: <span className={styles.priorityValue}>{priorityValue}</span>
+              </span>
+            )}
+            {rpmValue !== undefined && rpmValue > 0 && (
+              <span className={styles.priorityBadge}>
+                RPM: <span className={styles.priorityValue}>{rpmValue}</span>
               </span>
             )}
           </div>
