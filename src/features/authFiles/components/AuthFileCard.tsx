@@ -115,6 +115,8 @@ export function AuthFileCard(props: AuthFileCardProps) {
     Boolean(rawStatusMessage) && !HEALTHY_STATUS_MESSAGES.has(rawStatusMessage.toLowerCase());
 
   const priorityValue = parsePriorityValue(file.priority ?? file['priority']);
+  const rpmValue = parsePriorityValue(file.rpm ?? file['rpm']);
+  const maxConcurrentValue = parsePriorityValue(file.max_concurrent ?? file['max_concurrent']);
   const noteValue = typeof file.note === 'string' ? file.note.trim() : '';
   const stateLabel = isRuntimeOnly
     ? t('auth_files.type_virtual') || '虚拟认证文件'
@@ -211,6 +213,16 @@ export function AuthFileCard(props: AuthFileCardProps) {
                   {priorityValue}
                 </span>
               </div>
+            )}
+            {rpmValue !== undefined && rpmValue > 0 && (
+              <span className={styles.priorityBadge}>
+                RPM: <span className={styles.priorityValue}>{rpmValue}</span>
+              </span>
+            )}
+            {maxConcurrentValue !== undefined && maxConcurrentValue > 0 && (
+              <span className={styles.priorityBadge}>
+                MC: <span className={styles.priorityValue}>{maxConcurrentValue}</span>
+              </span>
             )}
           </div>
 
