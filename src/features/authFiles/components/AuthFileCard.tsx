@@ -214,16 +214,16 @@ export function AuthFileCard(props: AuthFileCardProps) {
                 </span>
               </div>
             )}
-            {rpmValue !== undefined && rpmValue > 0 && (
-              <span className={styles.priorityBadge}>
-                RPM: <span className={styles.priorityValue}>{rpmValue}</span>
-              </span>
-            )}
-            {maxConcurrentValue !== undefined && maxConcurrentValue > 0 && (
-              <span className={styles.priorityBadge}>
-                MC: <span className={styles.priorityValue}>{maxConcurrentValue}</span>
-              </span>
-            )}
+            {(rpmValue !== undefined && rpmValue > 0) || (maxConcurrentValue !== undefined && maxConcurrentValue > 0) ? (
+              <div className={`${styles.metaItem} ${styles.priorityBadge}`}>
+                <span className={styles.metaLabel}>RPM / MC</span>
+                <span className={`${styles.metaValue} ${styles.priorityValue}`}>
+                  {rpmValue !== undefined && rpmValue > 0 ? rpmValue : '-'}
+                  {' / '}
+                  {maxConcurrentValue !== undefined && maxConcurrentValue > 0 ? maxConcurrentValue : '-'}
+                </span>
+              </div>
+            ) : null}
           </div>
 
           {rawStatusMessage && hasStatusWarning && (
