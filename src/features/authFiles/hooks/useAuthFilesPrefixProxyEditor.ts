@@ -21,7 +21,7 @@ export type PrefixProxyEditorField =
   | 'excludedModelsText'
   | 'disableCooling'
   | 'rpm'
-  | 'maxConcurrent'
+
   | 'websockets'
   | 'note';
 
@@ -43,7 +43,7 @@ export type PrefixProxyEditorState = {
   excludedModelsText: string;
   disableCooling: string;
   rpm: string;
-  maxConcurrent: string;
+
   websockets: boolean;
   note: string;
   noteTouched: boolean;
@@ -106,12 +106,6 @@ const buildPrefixProxyUpdatedText = (editor: PrefixProxyEditorState | null): str
     delete next.rpm;
   }
 
-  const parsedMaxConcurrent = parsePriorityValue(editor.maxConcurrent);
-  if (parsedMaxConcurrent !== undefined && parsedMaxConcurrent > 0) {
-    next.max_concurrent = parsedMaxConcurrent;
-  } else if ('max_concurrent' in next) {
-    delete next.max_concurrent;
-  }
 
   if (editor.noteTouched) {
     const noteValue = editor.note.trim();
@@ -178,7 +172,7 @@ export function useAuthFilesPrefixProxyEditor(
       excludedModelsText: '',
       disableCooling: '',
       rpm: '',
-      maxConcurrent: '',
+
       websockets: false,
       note: '',
       noteTouched: false,
@@ -232,7 +226,7 @@ export function useAuthFilesPrefixProxyEditor(
       const excludedModels = normalizeExcludedModels(json.excluded_models);
       const disableCoolingValue = parseDisableCoolingValue(json.disable_cooling);
       const rpmValue = parsePriorityValue(json.rpm);
-      const maxConcurrentValue = parsePriorityValue(json.max_concurrent);
+
       const websocketsValue = readCodexAuthFileWebsockets(json);
       const note = typeof json.note === 'string' ? json.note : '';
 
@@ -251,7 +245,7 @@ export function useAuthFilesPrefixProxyEditor(
           disableCooling:
             disableCoolingValue === undefined ? '' : disableCoolingValue ? 'true' : 'false',
           rpm: rpmValue !== undefined && rpmValue > 0 ? String(rpmValue) : '',
-          maxConcurrent: maxConcurrentValue !== undefined && maxConcurrentValue > 0 ? String(maxConcurrentValue) : '',
+
           websockets: websocketsValue,
           note,
           noteTouched: false,
@@ -280,7 +274,7 @@ export function useAuthFilesPrefixProxyEditor(
       if (field === 'excludedModelsText') return { ...prev, excludedModelsText: String(value) };
       if (field === 'disableCooling') return { ...prev, disableCooling: String(value) };
       if (field === 'rpm') return { ...prev, rpm: String(value) };
-      if (field === 'maxConcurrent') return { ...prev, maxConcurrent: String(value) };
+
       if (field === 'note') return { ...prev, note: String(value), noteTouched: true };
       return { ...prev, websockets: Boolean(value) };
     });
