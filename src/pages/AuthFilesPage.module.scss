@@ -978,9 +978,10 @@
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
   min-height: 100%;
   transition:
     transform 0.18s ease,
@@ -1018,63 +1019,72 @@
 }
 
 .fileCardCompact {
-  padding: 12px;
+  padding: 10px;
   border-radius: 12px;
-
-  .fileCardMain {
-    gap: 8px;
-  }
+  gap: 8px;
 
   .cardHeader {
     gap: 8px;
   }
 
+  .cardHeaderLeft {
+    gap: 8px;
+  }
+
   .cardSelection {
-    margin-top: 6px;
+    margin-top: 4px;
   }
 
   .providerAvatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
   }
 
   .providerAvatarImage {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
   }
 
   .providerAvatarFallback {
-    font-size: 14px;
+    font-size: 13px;
   }
 
-  .cardHeaderContent {
-    gap: 3px;
+  .cardIdentity {
+    gap: 2px;
   }
 
   .cardBadgeRow {
-    gap: 5px;
+    gap: 4px;
   }
 
   .typeBadge,
   .stateBadge {
-    padding: 3px 7px;
+    padding: 2px 6px;
     font-size: 10px;
   }
 
   .fileName {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.3;
     -webkit-line-clamp: 1;
   }
 
-  .cardMetaStrip {
+  .cardMetaGrid {
     gap: 4px;
   }
 
-  .metaChip {
-    padding: 3px 7px;
-    font-size: 10px;
+  .metaCell {
+    padding: 3px 0;
+    gap: 2px;
+  }
+
+  .metaCellLabel {
+    font-size: 9px;
+  }
+
+  .metaCellValue {
+    font-size: 11px;
   }
 
   .healthStatusMessage {
@@ -1087,21 +1097,22 @@
     display: none;
   }
 
-  .cardStatsRow {
-    gap: 6px;
-  }
-
-  .statChip {
-    padding: 6px 8px;
+  .cardStatusSection {
     gap: 4px;
+    padding: 6px 8px;
+    border-radius: 8px;
   }
 
-  .statLabel {
-    font-size: 10px;
+  .statsInline {
+    gap: 8px;
   }
 
-  .statValue {
-    font-size: 16px;
+  .statInlineValue {
+    font-size: 13px;
+  }
+
+  .statInlineLabel {
+    font-size: 9px;
   }
 
   .cardActions {
@@ -1128,95 +1139,90 @@
   }
 
   .iconButton:global(.btn.btn-sm) {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 7px;
   }
-
-  .statusToggle {
-    width: 100%;
-    justify-content: space-between;
-    gap: 6px;
-    padding: 4px 7px;
-  }
-
-  .statusToggleLabel {
-    font-size: 11px;
-  }
-}
-
-.fileCardLayout {
-  display: flex;
-  align-items: stretch;
-  gap: $spacing-md;
-  min-height: 100%;
-}
-
-.fileCardMain {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
 }
 
 .cardHeader {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 10px;
+}
+
+.cardHeaderLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .cardSelection {
   flex-shrink: 0;
-  margin-top: 7px;
+  margin-top: 5px;
 }
 
 .providerAvatar {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px solid color-mix(in srgb, var(--border-color) 74%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
 }
 
 .providerAvatarImage {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
   object-fit: contain;
 }
 
 .providerAvatarFallback {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1;
 }
 
-.cardHeaderContent {
+.cardIdentity {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
   min-width: 0;
+}
+
+.fileName {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  word-break: break-all;
+  line-height: 1.35;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .cardBadgeRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .typeBadge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 9px;
+  padding: 3px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   line-height: 1;
   border: 1px solid transparent;
@@ -1227,7 +1233,7 @@
 .stateBadge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 9px;
+  padding: 3px 8px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 700;
@@ -1260,125 +1266,113 @@
   border: 1px dashed color-mix(in srgb, var(--border-primary) 90%, transparent);
 }
 
-.fileName {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  word-break: break-all;
-  line-height: 1.4;
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-// Inline meta chip strip
-.cardMetaStrip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.metaChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  line-height: 1.2;
-  border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 88%, transparent);
-}
-
-.metaChipLabel {
-  font-weight: 600;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-.metaChipValue {
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.metaChipAccent {
-  border-color: color-mix(in srgb, var(--primary-color) 22%, var(--border-color));
-  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-secondary));
-}
-
-// Stats row (replaces nested cardInsights)
-.cardStatsRow {
+// Meta grid layout
+.cardMetaGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.statChip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
+  gap: 6px;
   padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid transparent;
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
 }
 
-// Keep old names for backward compat with unused refs
-.priorityBadge {
+.metaCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0;
   min-width: 0;
 }
 
-.priorityValue {
+.metaCellLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.metaCellValue {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-// Legacy grid compat (keep for any remaining references)
-.cardMeta {
+.metaCellAccent {
+  .metaCellValue {
+    color: color-mix(in srgb, var(--primary-color) 80%, var(--text-primary));
+  }
+}
+
+// Unified status section (stats + status bar)
+.cardStatusSection {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-secondary) 40%, transparent);
 }
 
-.metaItem {
+.statsInline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statInlineSuccess,
+.statInlineFailure {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 88%, transparent);
 }
 
-.metaLabel {
-  font-weight: 600;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-  font-size: 11px;
-  line-height: 1.2;
-}
-
-.metaValue {
-  min-width: 0;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.2;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.cardMetaCompact {
-  gap: 4px;
-}
-
-.cardMetaCompact .metaItem {
-  padding: 3px 7px;
+.statInlineLabel {
   font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.statInlineValue {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.statInlineSuccess {
+  .statInlineLabel {
+    color: var(--success-badge-text, #065f46);
+  }
+
+  .statInlineValue {
+    color: var(--success-badge-text, #065f46);
+  }
+}
+
+.statInlineFailure {
+  .statInlineLabel {
+    color: var(--failure-badge-text);
+  }
+
+  .statInlineValue {
+    color: var(--failure-badge-text);
+  }
+}
+
+.statInlineSep {
+  width: 1px;
+  height: 14px;
+  background: color-mix(in srgb, var(--border-color) 80%, transparent);
+  flex-shrink: 0;
 }
 
 .noteText {
@@ -1426,43 +1420,7 @@
   margin-top: 1px;
 }
 
-// Legacy wrapper — no longer wrapping, kept as no-op for any residual references
-.cardInsights {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.cardInsightsCompact {
-  gap: 8px;
-}
-
-// Legacy pill alias (unused now, keep for compat)
-.cardStats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.cardStatsCompact {
-  gap: 6px;
-}
-
-.cardStatsCompact .statPill {
-  padding: 6px 8px;
-}
-
-.statPill {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-}
-
+// Legacy styles kept for compat
 .statLabel {
   font-size: 11px;
   font-weight: 600;
@@ -1486,55 +1444,6 @@
   background: var(--failure-badge-bg);
   color: var(--failure-badge-text);
   border-color: var(--failure-badge-border);
-}
-
-.statusPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
-}
-
-.statusPanelCompact {
-  gap: 4px;
-  padding: 8px;
-  border-radius: 8px;
-}
-
-.statusPanelCompact .statusPanelLabel {
-  display: none;
-}
-
-.statusPanelCompact .statusBar {
-  flex-wrap: wrap;
-  gap: 6px;
-  row-gap: 4px;
-}
-
-.statusPanelCompact .statusBlocks {
-  gap: 2px;
-}
-
-.statusPanelCompact .statusBlockWrapper {
-  min-width: 5px;
-}
-
-.statusPanelCompact .statusRate {
-  margin-left: auto;
-  padding: 4px 6px;
-  font-size: 10px;
-}
-
-.statusPanelLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-tertiary);
 }
 
 // 状态监测栏
@@ -1784,8 +1693,7 @@
 
 .cardActions {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
   margin-top: auto;
@@ -1797,6 +1705,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  flex: 1;
   min-width: 0;
 }
 
@@ -1855,21 +1764,13 @@
   background: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
 }
 
+// statusToggle kept for compat but no longer used in card body
 .statusToggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  padding: 5px 8px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-  background: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
+  display: none;
 }
 
 .statusToggleLabel {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  display: none;
 }
 
 .iconButton:global(.btn.btn-sm) {
@@ -1905,23 +1806,8 @@
     margin-left: auto;
   }
 
-  .statusToggle {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .fileCardCompact {
-    .cardActionsMain {
-      flex-wrap: wrap;
-    }
-
-    .primaryActionButton:global(.btn.btn-sm) {
-      flex: 1 1 auto;
-    }
-
-    .cardUtilityActions {
-      margin-left: auto;
-    }
+  .cardMetaGrid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 

@@ -2,11 +2,15 @@
  * Generic quota card component.
  */
 
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ReactElement, ReactNode } from 'react';
 import type { TFunction } from 'i18next';
-import type { AuthFileItem, ResolvedTheme, ThemeColors } from '@/types';
+import type { AuthFileItem, RateLimitEntry, ResolvedTheme, ThemeColors } from '@/types';
 import { TYPE_COLORS } from '@/utils/quota';
+import { formatQuotaResetTime } from '@/utils/quota/formatters';
+import { useQuotaStore } from '@/stores';
+import { usageApi } from '@/services/api/usage';
 import styles from '@/pages/QuotaPage.module.scss';
 
 type QuotaStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -56,6 +60,70 @@ export interface QuotaRenderHelpers {
   QuotaProgressBar: (props: QuotaProgressBarProps) => ReactElement;
 }
 
+function findRateLimitForItem(
+  rateLimits: RateLimitEntry[],
+  item: AuthFileItem
+): RateLimitEntry | undefined {
+  const name = item.name;
+  return rateLimits.find(
+    (rl) =>
+      rl.auth_id === name ||
+      rl.file_name === name ||
+      rl.auth_label === name
+  );
+}
+
+function RateLimitDisplay({ entry }: { entry: RateLimitEntry }) {
+  const { t } = useTranslation();
+  const fiveHourUsed = Math.round(entry.five_hour_utilization * 100);
+  const sevenDayUsed = Math.round(entry.seven_day_utilization * 100);
+  const fiveHourRemaining = Math.max(0, 100 - fiveHourUsed);
+  const sevenDayRemaining = Math.max(0, 100 - sevenDayUsed);
+
+  const fiveHourReset = entry.five_hour_reset
+    ? formatQuotaResetTime(new Date(entry.five_hour_reset * 1000).toISOString())
+    : '-';
+  const sevenDayReset = entry.seven_day_reset
+    ? formatQuotaResetTime(new Date(entry.seven_day_reset * 1000).toISOString())
+    : '-';
+
+  const updatedLabel = entry.updated_at
+    ? formatQuotaResetTime(entry.updated_at)
+    : '';
+
+  return (
+    <>
+      <div className={styles.quotaRow}>
+        <div className={styles.quotaRowHeader}>
+          <span className={styles.quotaModel}>{t('claude_quota.five_hour')}</span>
+          <div className={styles.quotaMeta}>
+            <span className={styles.quotaPercent}>{fiveHourRemaining}%</span>
+            <span className={styles.quotaReset}>{fiveHourReset}</span>
+          </div>
+        </div>
+        <QuotaProgressBar percent={fiveHourRemaining} highThreshold={80} mediumThreshold={50} />
+      </div>
+      <div className={styles.quotaRow}>
+        <div className={styles.quotaRowHeader}>
+          <span className={styles.quotaModel}>{t('claude_quota.seven_day')}</span>
+          <div className={styles.quotaMeta}>
+            <span className={styles.quotaPercent}>{sevenDayRemaining}%</span>
+            <span className={styles.quotaReset}>{sevenDayReset}</span>
+          </div>
+        </div>
+        <QuotaProgressBar percent={sevenDayRemaining} highThreshold={80} mediumThreshold={50} />
+      </div>
+      {updatedLabel && (
+        <div className={styles.quotaMeta}>
+          <span className={styles.quotaReset}>
+            {t('claude_quota.rate_limit_updated_at', { time: updatedLabel })}
+          </span>
+        </div>
+      )}
+    </>
+  );
+}
+
 interface QuotaCardProps<TState extends QuotaStatusState> {
   item: AuthFileItem;
   quota?: TState;
@@ -79,6 +147,30 @@ export function QuotaCard<TState extends QuotaStatusState>({
 }: QuotaCardProps<TState>) {
   const { t } = useTranslation();
 
+  const rateLimits = useQuotaStore((state) => state.rateLimits);
+  const rateLimitsStatus = useQuotaStore((state) => state.rateLimitsStatus);
+  const setRateLimits = useQuotaStore((state) => state.setRateLimits);
+  const setRateLimitsStatus = useQuotaStore((state) => state.setRateLimitsStatus);
+
+  const isClaude = defaultType === 'claude';
+
+  // Auto-fetch rate limits for Claude cards (once globally).
+  useEffect(() => {
+    if (!isClaude) return;
+    if (rateLimitsStatus !== 'idle') return;
+
+    setRateLimitsStatus('loading');
+    usageApi
+      .getRateLimits()
+      .then((res) => {
+        setRateLimits(res?.rate_limits ?? []);
+        setRateLimitsStatus('done');
+      })
+      .catch(() => {
+        setRateLimitsStatus('error');
+      });
+  }, [isClaude, rateLimitsStatus, setRateLimits, setRateLimitsStatus]);
+
   const displayType = item.type || item.provider || defaultType;
   const typeColorSet = TYPE_COLORS[displayType] || TYPE_COLORS.unknown;
   const typeColor: ThemeColors =
@@ -91,6 +183,11 @@ export function QuotaCard<TState extends QuotaStatusState>({
     quota?.error || t('common.unknown_error')
   );
   const idleMessageKey = cardIdleMessageKey ?? `${i18nPrefix}.idle`;
+
+  const rateLimitEntry =
+    isClaude && quotaStatus === 'idle'
+      ? findRateLimitForItem(rateLimits, item)
+      : undefined;
 
   const getTypeLabel = (type: string): string => {
     const key = `auth_files.filter_${type}`;
@@ -120,7 +217,11 @@ export function QuotaCard<TState extends QuotaStatusState>({
         {quotaStatus === 'loading' ? (
           <div className={styles.quotaMessage}>{t(`${i18nPrefix}.loading`)}</div>
         ) : quotaStatus === 'idle' ? (
-          <div className={styles.quotaMessage}>{t(idleMessageKey)}</div>
+          rateLimitEntry ? (
+            <RateLimitDisplay entry={rateLimitEntry} />
+          ) : (
+            <div className={styles.quotaMessage}>{t(idleMessageKey)}</div>
+          )
         ) : quotaStatus === 'error' ? (
           <div className={styles.quotaError}>
             {t(`${i18nPrefix}.load_failed`, {
