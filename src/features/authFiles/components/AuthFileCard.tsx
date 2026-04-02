@@ -141,6 +141,7 @@ export function AuthFileCard(props: AuthFileCardProps) {
     >
       <div className={styles.fileCardLayout}>
         <div className={styles.fileCardMain}>
+          {/* Top row: checkbox + provider icon + name + state badge */}
           <div className={styles.cardHeader}>
             {!isRuntimeOnly && (
               <SelectionCheckbox
@@ -186,46 +187,46 @@ export function AuthFileCard(props: AuthFileCardProps) {
               <span className={styles.fileName} title={file.name}>
                 {file.name}
               </span>
-              {!compact && noteValue && (
-                <div className={styles.noteText} title={noteValue}>
-                  <span className={styles.noteLabel}>{t('auth_files.note_display')}</span>
-                  <span className={styles.noteValue}>{noteValue}</span>
-                </div>
-              )}
             </div>
           </div>
 
-          <div className={`${styles.cardMeta} ${compact ? styles.cardMetaCompact : ''}`}>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>{t('auth_files.file_size')}</span>
-              <span className={styles.metaValue}>
-                {file.size ? formatFileSize(file.size) : '-'}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>{t('auth_files.file_modified')}</span>
-              <span className={styles.metaValue}>{formatModified(file)}</span>
-            </div>
+          {/* Inline meta chips */}
+          <div className={styles.cardMetaStrip}>
+            <span className={styles.metaChip}>
+              <span className={styles.metaChipLabel}>{t('auth_files.file_size')}</span>
+              <span className={styles.metaChipValue}>{file.size ? formatFileSize(file.size) : '-'}</span>
+            </span>
+            <span className={styles.metaChip}>
+              <span className={styles.metaChipLabel}>{t('auth_files.file_modified')}</span>
+              <span className={styles.metaChipValue}>{formatModified(file)}</span>
+            </span>
             {priorityValue !== undefined && (
-              <div className={`${styles.metaItem} ${styles.priorityBadge}`}>
-                <span className={styles.metaLabel}>{t('auth_files.priority_display')}</span>
-                <span className={`${styles.metaValue} ${styles.priorityValue}`}>
-                  {priorityValue}
-                </span>
-              </div>
+              <span className={`${styles.metaChip} ${styles.metaChipAccent}`}>
+                <span className={styles.metaChipLabel}>{t('auth_files.priority_display')}</span>
+                <span className={styles.metaChipValue}>{priorityValue}</span>
+              </span>
             )}
-            {(rpmValue !== undefined && rpmValue > 0) || (maxConcurrentValue !== undefined && maxConcurrentValue > 0) ? (
-              <div className={`${styles.metaItem} ${styles.priorityBadge}`}>
-                <span className={styles.metaLabel}>RPM / MC</span>
-                <span className={`${styles.metaValue} ${styles.priorityValue}`}>
+            {((rpmValue !== undefined && rpmValue > 0) || (maxConcurrentValue !== undefined && maxConcurrentValue > 0)) && (
+              <span className={`${styles.metaChip} ${styles.metaChipAccent}`}>
+                <span className={styles.metaChipLabel}>RPM / MC</span>
+                <span className={styles.metaChipValue}>
                   {rpmValue !== undefined && rpmValue > 0 ? rpmValue : '-'}
                   {' / '}
                   {maxConcurrentValue !== undefined && maxConcurrentValue > 0 ? maxConcurrentValue : '-'}
                 </span>
-              </div>
-            ) : null}
+              </span>
+            )}
           </div>
 
+          {/* Note (non-compact only) */}
+          {!compact && noteValue && (
+            <div className={styles.noteText} title={noteValue}>
+              <span className={styles.noteLabel}>{t('auth_files.note_display')}</span>
+              <span className={styles.noteValue}>{noteValue}</span>
+            </div>
+          )}
+
+          {/* Status warning */}
           {rawStatusMessage && hasStatusWarning && (
             <div className={styles.healthStatusMessage} title={rawStatusMessage}>
               <IconInfo className={styles.messageIcon} size={14} />
@@ -233,34 +234,38 @@ export function AuthFileCard(props: AuthFileCardProps) {
             </div>
           )}
 
-          <div className={`${styles.cardInsights} ${compact ? styles.cardInsightsCompact : ''}`}>
-            <div className={`${styles.cardStats} ${compact ? styles.cardStatsCompact : ''}`}>
-              <div className={`${styles.statPill} ${styles.statSuccess}`}>
-                <span className={styles.statLabel}>{t('stats.success')}</span>
-                <span className={styles.statValue}>{fileStats.success}</span>
-              </div>
-              <div className={`${styles.statPill} ${styles.statFailure}`}>
-                <span className={styles.statLabel}>{t('stats.failure')}</span>
-                <span className={styles.statValue}>{fileStats.failure}</span>
-              </div>
+          {/* Stats row: success / failure inline */}
+          <div className={styles.cardStatsRow}>
+            <div className={`${styles.statChip} ${styles.statSuccess}`}>
+              <span className={styles.statLabel}>{t('stats.success')}</span>
+              <span className={styles.statValue}>{fileStats.success}</span>
             </div>
+            <div className={`${styles.statChip} ${styles.statFailure}`}>
+              <span className={styles.statLabel}>{t('stats.failure')}</span>
+              <span className={styles.statValue}>{fileStats.failure}</span>
+            </div>
+          </div>
 
-            <div className={`${styles.statusPanel} ${compact ? styles.statusPanelCompact : ''}`}>
+          {/* Status bar */}
+          <div className={`${styles.statusPanel} ${compact ? styles.statusPanelCompact : ''}`}>
+            {!compact && (
               <div className={styles.statusPanelLabel}>
                 <span>{t('auth_files.health_status_label')}</span>
               </div>
-              <ProviderStatusBar statusData={statusData} styles={styles} />
-            </div>
-
-            {showQuotaLayout && quotaType && (
-              <AuthFileQuotaSection
-                file={file}
-                quotaType={quotaType}
-                disableControls={disableControls}
-              />
             )}
+            <ProviderStatusBar statusData={statusData} styles={styles} />
           </div>
 
+          {/* Quota (non-compact, provider filtered) */}
+          {showQuotaLayout && quotaType && (
+            <AuthFileQuotaSection
+              file={file}
+              quotaType={quotaType}
+              disableControls={disableControls}
+            />
+          )}
+
+          {/* Actions: single row */}
           <div className={styles.cardActions}>
             <div className={styles.cardActionsMain}>
               {showModelsButton && (

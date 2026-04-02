@@ -4,6 +4,7 @@
 
 import { apiClient } from './client';
 import { computeKeyStats, KeyStats } from '@/utils/usage';
+import type { RateLimitsResponse } from '@/types';
 
 const USAGE_TIMEOUT_MS = 60 * 1000;
 
@@ -49,5 +50,11 @@ export const usageApi = {
       payload = response?.usage ?? response;
     }
     return computeKeyStats(payload);
-  }
+  },
+
+  /**
+   * 获取从响应 header 被动采集的 rate limit 数据
+   */
+  getRateLimits: () =>
+    apiClient.get<RateLimitsResponse>('/rate-limits', { timeout: USAGE_TIMEOUT_MS }),
 };

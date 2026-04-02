@@ -630,7 +630,8 @@
     "plan_pro": "专业版",
     "plan_max": "Max",
     "plan_max5": "Max 5x",
-    "plan_max20": "Max 20x"
+    "plan_max20": "Max 20x",
+    "rate_limit_updated_at": "更新于 {{time}}"
   },
   "codex_quota": {
     "title": "Codex 额度",

@@ -306,3 +306,30 @@ export interface KimiQuotaState {
   error?: string;
   errorStatus?: number;
 }
+
+// Rate limit entry from GET /v0/management/rate-limits
+export interface RateLimitEntry {
+  auth_id: string;
+  auth_label?: string;
+  file_name?: string;
+  provider?: string;
+  disabled: boolean;
+  organization_id?: string;
+  five_hour_utilization: number;
+  five_hour_status?: string;
+  five_hour_reset?: number;
+  seven_day_utilization: number;
+  seven_day_status?: string;
+  seven_day_reset?: number;
+  unified_status?: string;
+  unified_reset?: number;
+  representative_claim?: string;
+  fallback_percentage?: number;
+  overage_status?: string;
+  overage_disabled_reason?: string;
+  updated_at?: string;
+}
+
+export interface RateLimitsResponse {
+  rate_limits: RateLimitEntry[];
+}
