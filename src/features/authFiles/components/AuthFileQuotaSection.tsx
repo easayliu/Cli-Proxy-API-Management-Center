@@ -38,8 +38,12 @@ function findRateLimitForFile(
   rateLimits: RateLimitEntry[],
   file: AuthFileItem
 ): RateLimitEntry | undefined {
+  const name = file.name;
   return rateLimits.find(
-    (rl) => rl.file_name === file.name || rl.auth_label === file.name
+    (rl) =>
+      rl.auth_id === name ||
+      rl.file_name === name ||
+      rl.auth_label === name
   );
 }
 
